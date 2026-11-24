@@ -13,6 +13,10 @@ public class PlayerController : MonoBehaviour
         left, right
     }
 
+    FacingDirection tempDirection = FacingDirection.right;
+
+    bool isWalking;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -46,23 +50,47 @@ public class PlayerController : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(playerInput.x * moveSpeed,rb.linearVelocity.y);
 
+        isWalking = playerInput.x != 0;
+
         if (playerInput.y > 0)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+
+        if (playerInput.x < 0)
+        {
+            tempDirection = FacingDirection.left;
+        }
+
+        if (playerInput.x > 0)
+        {
+            tempDirection = FacingDirection.right;
+        }
+
     }
 
     public bool IsWalking()
     {
+        if (isWalking)
+        {
+            return true;
+        }
+
         return false;
     }
     public bool IsGrounded()
     {
-        return false;
+        return true;
     }
 
     public FacingDirection GetFacingDirection()
     {
+
+        if (tempDirection == FacingDirection.right)
+        {
+            return FacingDirection.right;
+        }
+
         return FacingDirection.left;
     }
 }
