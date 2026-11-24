@@ -1,32 +1,58 @@
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    Rigidbody2D rb;
+    [Header("References")]
+    public Rigidbody2D rb;
 
+    [Header("Horizontal")]
     public float moveSpeed = 3f;
+    public float accelerationTime = 0.25f;
+    public float decelerationTime = 0.15f;
 
-    public float jumpForce = 5f;
+    [Header("Vertical")]
+    public float apexHeight = 3f;
+    public float apexTime = 0.5f;
 
-    public float terminalVel = 5f;
+    [Header("Ground Checking")]
+    public float groundCheckOffset = 0.65f;
+    public Vector2 groundCheckSize = new(0.5f, 0.1f);
+    public LayerMask groundCheckMask;
 
-    public float weight = 1f;
+    private float acceleration;
+    private float deceleration;
+    private Vector2 velocity;
+
+
+    float gravity;
+    float jumpVelocity;
+    float terminalVel;
+
+
     public enum FacingDirection
     {
         left, right
     }
 
-    FacingDirection tempDirection = FacingDirection.right;
+    FacingDirection facingDirection = FacingDirection.right;
 
     bool isWalking;
-
     bool isGrounded;
+    bool isJumping;
 
     void Start()
     {
+        acceleration = moveSpeed / accelerationTime;
+        deceleration = moveSpeed / decelerationTime;
+
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0;
+
+        gravity = -2 * apexHeight / Mathf.Pow(apexTime, 2);
+        jumpVelocity = 2 * apexHeight / apexTime;
     }
 
     void Update()
@@ -39,15 +65,19 @@ public class PlayerController : MonoBehaviour
         // manage the actual movement of the character.
         if (isGrounded && Keyboard.current.wKey.wasPressedThisFrame || isGrounded && Keyboard.current.upArrowKey.wasPressedThisFrame)
         {
-            playerInput.y = 1;
+            isJumping = true;
         }
+        
         if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed)
         {
-            playerInput.x = -1;
+            playerInput.x += -1;
+            tempDirection = FacingDirection.left;
         }
+        
         if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed)
         {
-            playerInput.x = 1;
+            playerInput.x += 1;
+            tempDirection = FacingDirection.right;
         }
        
 
@@ -88,6 +118,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (!isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+            velocity.y = Mathf.Clamp(velocity.y, terminalVel, velocity.y);
+        }
+        else
+        {
+            velocity.y = 0;
+        }
+        
+        if (isJumping)
+        {
+            isJumping = false;
+            velocity.y = jumpVelocity;
+        } 
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -107,13 +156,9 @@ public class PlayerController : MonoBehaviour
     }
 
     public bool IsWalking()
-    {
-        if (isWalking)
-        {
-            return true;
-        }
+    { 
 
-        return false;
+        return playerInput.x =!0;
     }
     public bool IsGrounded()
     {

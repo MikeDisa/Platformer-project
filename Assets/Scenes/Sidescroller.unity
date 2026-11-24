@@ -4210,6 +4210,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2785765583629223729, guid: c0063abd85bf41b4faef95c439286949, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428298229329625348, guid: c0063abd85bf41b4faef95c439286949, type: 3}
+      propertyPath: weight
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428298229329625348, guid: c0063abd85bf41b4faef95c439286949, type: 3}
+      propertyPath: jumpForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428298229329625348, guid: c0063abd85bf41b4faef95c439286949, type: 3}
+      propertyPath: terminalVel
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8927549095852432977, guid: c0063abd85bf41b4faef95c439286949, type: 3}
       propertyPath: m_Name
       value: Player
