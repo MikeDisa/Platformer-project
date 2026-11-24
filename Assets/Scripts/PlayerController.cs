@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
 
     bool isWalking;
 
+    bool isGrounded;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -30,7 +32,7 @@ public class PlayerController : MonoBehaviour
         // The input from the player needs to be determined and
         // then passed in the to the MovementUpdate which should
         // manage the actual movement of the character.
-        if (Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame)
+        if (isGrounded && Keyboard.current.wKey.wasPressedThisFrame || isGrounded && Keyboard.current.upArrowKey.wasPressedThisFrame)
         {
             playerInput.y = 1;
         }
@@ -69,6 +71,22 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
+    }
+
     public bool IsWalking()
     {
         if (isWalking)
@@ -80,7 +98,12 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        return true;
+        if (isGrounded)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public FacingDirection GetFacingDirection()
