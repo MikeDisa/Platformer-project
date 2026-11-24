@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,10 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f;
 
     public float jumpForce = 5f;
+
+    public float terminalVel = 5f;
+
+    public float weight = 1f;
     public enum FacingDirection
     {
         left, right
@@ -44,6 +49,7 @@ public class PlayerController : MonoBehaviour
         {
             playerInput.x = 1;
         }
+       
 
         MovementUpdate(playerInput);
     }
@@ -69,6 +75,17 @@ public class PlayerController : MonoBehaviour
             tempDirection = FacingDirection.right;
         }
 
+        //falling physiscs
+        
+        if (rb.linearVelocity.y < (terminalVel * -1))
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, terminalVel * -1);
+        }
+        
+        if (rb.linearVelocity.y < 0)
+        {
+            rb.gravityScale = weight;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -76,6 +93,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            rb.gravityScale = 1;
         }
     }
 
@@ -84,6 +102,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+            rb.gravityScale = 1;
         }
     }
 
